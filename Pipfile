@@ -6,6 +6,9 @@ name = "pypi"
 [dev-packages]
 
 [packages]
+django-mptt = "*"
+django-taggit = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.5"

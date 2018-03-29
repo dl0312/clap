@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+{% load staticfiles %}
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" src="{% static 'css/guide.css' %}"/>
+        <title>CLAP</title>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div>
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

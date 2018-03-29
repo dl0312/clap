@@ -1,22 +1,15 @@
-<html>
-
-<head>
-    <title>Django Girls blog</title>
-</head>
-
-<body>
-    <div>
-        <h1>
-            <a href="">Django Girls Blog</a>
-        </h1>
-    </div>
-    {% for post in posts %} 
+{% extends 'guide/base.html' %}
+{% block content %}
+    {% for image in images %} 
         <div>
-            <p>published: {{ post.published_date }}</p>
-            <h1><a href="">{{ post.title }}</a></h1>
-            <p>{{ post.text | linebreaksbr }}</p>
+            <h3><a href="">{{ image.title }}</a></h3>
         </div>
+        <img class="image" src="{{ image.image.url }}"/>
+        <div class="text">content: {{image.text}}</div>
+        <div class="genre">category: {{image.genre.name}}</div>
+        hierarchy:
+        {% for ancestor in image.genre.get_ancestors %}
+            <div class="ancestor"> {{ ancestor.name }}</div>
+        {% endfor %}
     {% endfor %}
-</body>
-
-</html>
+{% endblock %}

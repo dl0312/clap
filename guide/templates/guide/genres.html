@@ -1,0 +1,23 @@
+{% extends 'guide/base.html' %} {% block content %}
+{% load mptt_tags %}
+<script>
+    function callLowerLevel() {
+        document.getElementsByClassName("children").style.visibility = "visible";
+    }
+</script>
+<ul>
+    {% recursetree genres %}
+    <li>
+        <img src="https://d30y9cdsu7xlg0.cloudfront.net/png/80556-200.png" onclick="" style="width:10px">
+        <input type="button" onclick="location.href='./{{ node.name }}';" value="{{ node.name }}"/>
+        {% if not node.is_leaf_node %}
+            <ul class="children">
+                {{ children }}
+            </ul>
+        {% endif %}
+    </li>
+    {% endrecursetree %}
+</ul>
+{% endblock %}
+
+

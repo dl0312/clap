@@ -1,0 +1,33 @@
+Arguments: 
+  /usr/local/bin/node /usr/share/yarn/bin/yarn.js add django-mptt
+
+PATH: 
+  /home/geon/bin:/home/geon/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/mnt/c/ProgramData/Oracle/Java/javapath_target_8111437:/mnt/c/Program Files (x86)/Intel/iCLS Client:/mnt/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler:/mnt/c/Program Files/Dell/DW WLAN Card:/mnt/c/Program Files/Intel/iCLS Client:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0:/mnt/c/Program Files/WIDCOMM/Bluetooth Software:/mnt/c/Program Files/WIDCOMM/Bluetooth Software/syswow64:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0:/mnt/c/Program Files/Microsoft DNX/Dnvm:/mnt/c/Program Files/Microsoft SQL Server/130/Tools/Binn:/mnt/c/Program Files (x86)/Windows Kits/8.1/Windows Performance Toolkit:/mnt/c/Program Files (x86)/GtkSharp/2.12/bin:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/IPT:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/IPT:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Git/mingw64/bin:/mnt/c/Program Files/Git/usr/bin:/mnt/c/Program Files/nodejs:/mnt/c/Bitnami/wampstack-7.1.14-0/mysql/bin:/mnt/c/Program Files (x86)/Yarn/bin:/mnt/c/Users/leegu/AppData/Local/Android/Sdk/platform-tools:/mnt/c/Users/leegu/AppData/Local/Android/Sdk/tools/bin:/mnt/c/Users/leegu/AppData/Local/Android/Sdk/tools:/mnt/c/Program Files (x86)/Intel/iCLS Client:/mnt/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler:/mnt/c/Program Files/Dell/DW WLAN Card:/mnt/c/Program Files/Intel/iCLS Client:/mnt/c/Windows/System32:/mnt/c/Program Files/PostgreSQL/10/bin:/mnt/c/Program Files/PostgreSQL/10/lib:/mnt/c/Program Files/dotnet:/mnt/c/Users/leegu/AppData/Local/Programs/Python/Python36-32/Scripts:/mnt/c/Users/leegu/AppData/Local/Programs/Python/Python36-32:/mnt/c/Users/leegu/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/leegu/AppData/Local/GitHubDesktop/bin:/mnt/c/Users/leegu/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/leegu/AppData/Local/atom/bin:/mnt/c/Users/leegu/AppData/Roaming/npm:/mnt/c/Users/leegu/AppData/Local/Yarn/bin:/mnt/c/Program Files/Microsoft VS Code/bin:/snap/bin
+
+Yarn version: 
+  1.5.1
+
+Node version: 
+  9.8.0
+
+Platform: 
+  linux x64
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: Couldn't find package "django-mptt" on the "npm" registry.
+      at new MessageError (/usr/share/yarn/lib/cli.js:186:110)
+      at NpmResolver.<anonymous> (/usr/share/yarn/lib/cli.js:51625:15)
+      at Generator.next (<anonymous>)
+      at step (/usr/share/yarn/lib/cli.js:98:30)
+      at /usr/share/yarn/lib/cli.js:109:13
+      at <anonymous>
+      at process._tickCallback (internal/process/next_tick.js:118:7)
