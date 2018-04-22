@@ -9,6 +9,10 @@ name = "pypi"
 django-mptt = "*"
 django-taggit = "*"
 pillow = "*"
+djangorestframework = "*"
+django-allauth = "*"
+django-rest-auth = "*"
+django-taggit-serializer = "*"
 
 [requires]
 python_version = "3.5"

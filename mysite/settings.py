@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
 
+AUTH_USER_MODEL = 'guide.User'
 
 # Application definition
 
@@ -37,11 +38,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth', # registration
+    'allauth.account', # registration
+    'allauth.socialaccount', # registration
+    'allauth.socialaccount.providers.facebook', # facebook registration
     'upload',
     'guide',
     'wiki',
     'mptt',
     'taggit', # Tags for the photos
+    'taggit_serializer', # Serializer for taggit
+    'rest_framework',
+    'rest_auth',
 ]
 
 MIDDLEWARE = [

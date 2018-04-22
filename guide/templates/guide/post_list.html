@@ -1,15 +1,20 @@
-{% extends 'guide/base.html' %}
-{% block content %}
-    {% for image in images %} 
-        <div>
-            <h3><a href="">{{ image.title }}</a></h3>
-        </div>
-        <img class="image" src="{{ image.image.url }}"/>
-        <div class="text">content: {{image.text}}</div>
-        <div class="genre">category: {{image.genre.name}}</div>
-        hierarchy:
-        {% for ancestor in image.genre.get_ancestors %}
-            <div class="ancestor"> {{ ancestor.name }}</div>
-        {% endfor %}
+{% extends 'guide/base.html' %} {% block content %} {% for post in posts %}
+<div>
+    hierarchy : {% for ancestor in post.category.get_ancestors %}
+    <span class="ancestor"> [ {{ ancestor.name }} ] => </span>
     {% endfor %}
-{% endblock %}
+    <span class="genre">[ {{post.category.name}} ]</span>
+    <h3>
+        <a href="">{{ post.title }}</a>
+    </h3>
+    <div class="time">updated_at: {{post.updated_at}}</div>
+    <div class="view">view: {{post.view}}</div>
+    <div class="comment">comment: {{post.comment_count}}</div>
+    <div class="clap">clap: {{post.clap_count}}</div>
+    <div class="profileImage">profile:
+        <img src="{{ post.creator.profile_image.url }}" /> {{ post.creator }}</div>
+</div>
+{{ post.images.objects }}
+<div class="text">content: {{post.body}}</div>
+
+{% endfor %} {% endblock %}
