@@ -11,14 +11,112 @@ from rest_framework.response import Response
 from rest_framework import status
 from . import models, serializers
 
-class Post(APIView):
+class PostList(APIView):
     def get(self, request, format=None):
         post_list = []
-        posts = models.Post.objects.all()
+        posts = models.Post.objects.all()[:10]
         for post in posts:
             post_list.append(post)
-        serializer = serializers.PostSerializer(post_list, many=True, context={'request': request})
+        serializer = serializers.SimplePostSerializer(post_list, many=True, context={'request': request})
         return Response(serializer.data)
+
+class Post(APIView):
+
+    def find_own_post(self,post_id,user):
+        try:
+            post = models.Post.objects.get(id=post_id)
+            return post
+        except models.Post.DoesNotExist:
+            return None
+
+    def post(self, request, format=None):
+
+        user = request.user
+        
+        serializer = serializers.InputPostSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            serializer.save(creator=user)
+
+            followers = user.follower.objects.all()
+            
+            for follower in followers:
+    
+                Notifications.create_notification(user,follower,"post",request.post,serializer.data['title'])
+
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+        else:
+            
+            print(serializer.errors)
+
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, post_id, format=None):
+
+        user = request.user
+
+        post = self.find_own_post(post_id,user)
+
+        if post is None:
+            
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = serializers.PostSerializer(post,context={'request':request})
+        
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, post_id, format=None):
+        user=request.user
+        post = self.find_own_post(post_id,user)
+        if post is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializers = serializers.PostSerializer(post,context={'request':request})
+        
+        if serializer.is_valid():
+            serializer.save(creator=user)
+            return Response(data=serializer.data, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(data=serializer.data, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, post_id, format=None):
+        user = request.user
+        post = self.find_own_post(post_id,user)
+        if post is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ClapPost(APIView):
+    def post(self,request, post_id, format=None):
+        
+        user = request.user
+
+        try:
+            found_post = models.Post.objects.get(id=post_id)
+        except models.Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if user is found_post.creator:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        
+        try:
+            preexisting_clap = models.Clap.objects.get(
+                creator = user,
+                post = found_post
+            )
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
+        except models.Clap.DoesNotExist:
+            new_clap = models.Clap.objects.create(
+                creator=user,
+                post=found_post
+            )
+
+            Notifications.create_notification(user,found_post.creator,"clap",found_post)
+
+            new_clap.save()
+            
+            return Response(status=status.HTTP_201_CREATED)
 
 class Feed(APIView):
     def get(self, request, format=None):
@@ -39,6 +137,30 @@ class Feed(APIView):
         serializer = serializers.PostSerializer(sorted_list, many=True, context={'request': request})
 
         return Response(serializer.data)
+
+class Notifications(APIView):
+
+    def get(self,request, format=None):
+        
+        user = request.user
+
+        notifications = models.Notification.objects.filter(to=user)
+
+        serializer = serializers.NotificationSerializer(notifications, many=True)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def create_notification(creator, to, notification_type, post = None, comment = None):
+
+        notification = models.Notification.objects.create(
+            creator = creator,
+            to = to,
+            notification_type = notification_type,
+            post = post,
+            comment = comment,
+        )
+
+
 
 def post_list(request):
     posts = models.Post.objects.all()

@@ -12,11 +12,6 @@ from django.utils.text import slugify
 def upload_location(instance, filename):
     return "%s/%s" %(instance.id, filename)
 
-def get_images_filename(instance, filename):
-        title = instance.post.title
-        slug = slugify(title)
-        return "post_images/%s-%s" % (slug,filename)
-
 class TimeStampeModel(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -44,6 +39,7 @@ class User(AbstractUser):
     following = models.ManyToManyField("self", blank=True)
     exp = models.IntegerField(default=0)
     clap = models.IntegerField(default=0)
+    certification = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -85,7 +81,7 @@ class Category(MPTTModel):
 @python_2_unicode_compatible
 class Post(TimeStampeModel):
 
-    """ Image Model """
+    """ Post Model """
 
     title = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='posts')
@@ -133,14 +129,14 @@ class Clap(TimeStampeModel):
     post = models.ForeignKey(Post, null=True, on_delete=models.CASCADE, related_name='claps')
 
     def __str__(self):
-        return 'User: {} - Image Caption: {}'.format(self.creator.username, self.post.title)
+        return 'User: {} - Post: {}'.format(self.creator.username, self.post.title)
 
 @python_2_unicode_compatible
 class Image(TimeStampeModel):
 
     """ Image Model """
-    post = models.ForeignKey(Post,on_delete=models.CASCADE, default=None)
-    image = models.ImageField(upload_to=get_images_filename,verbose_name='Image',)
+
+    image = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Image',)
 
     @property
     def natural_time(self):
@@ -148,7 +144,7 @@ class Image(TimeStampeModel):
 
 
     def __str__(self):
-        return '{} - {}'.format(self.post, self.image)
+        return self.image.url
 
     class Meta:
         ordering = ['-created_at']
@@ -157,7 +153,7 @@ class Image(TimeStampeModel):
 class WikiImage(TimeStampeModel):
 
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='images')
-    image = models.ImageField(upload_to=get_images_filename,verbose_name='Image',)
+    image = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Image',)
 
     @property
     def natural_time(self):
@@ -177,6 +173,7 @@ class Notification(TimeStampeModel):
         ('clap', 'Clap'),
         ('comment', 'Comment'),
         ('follow', 'Follow'),
+        ('guide','Guide')
     )
 
     creator = models.ForeignKey(User, on_delete=models.PROTECT, related_name='creator')

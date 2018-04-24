@@ -12,8 +12,18 @@ urlpatterns = [
     ),
     url(
         regex = r'^api/post/$',
-        view = views.Post.as_view(),
+        view = views.PostList.as_view(),
         name = 'api_post_list'
+    ),
+    url(
+        regex = r'^api/post/(?P<post_id>[0-9]+)/$',
+        view = views.Post.as_view(),
+        name = 'api_post_detail'
+    ),
+    url(
+        regex = r'^api/post/(?P<post_id>[0-9]+)/clap/$',
+        view = views.ClapPost.as_view(),
+        name = 'api_clap_post'
     ),
     url(
         regex = r'^api/image/$',

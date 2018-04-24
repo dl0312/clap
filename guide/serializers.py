@@ -31,7 +31,39 @@ class FeedUserSerializer(serializers.ModelSerializer):
         model = models.User
         fields = (
             'username',
-            'profile_image'
+            'profile_image',
+            'certification',
+        )
+
+class ListUserSerializer(serializers.ModelSerializer):
+
+    following = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.User
+        fields = (
+            'id',
+            'profile_image',
+            'username',
+            'name',
+            'following'
+        )
+    
+    def get_following(self,obj):
+        if 'request' in self.context:
+            request = self.context['request']
+            if obj in request.user.following.all():
+                return True
+            return False
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.User
+        fields = (
+            'profile_image',
+            'username',
+            'bio',
         )
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -59,6 +91,35 @@ class MpttSerializer(serializers.ModelSerializer):
         fields = (
             'name',
         )
+
+class SimplePostSerializer(TaggitSerializer, serializers.ModelSerializer):
+
+    creator = FeedUserSerializer()
+    is_claped = serializers.SerializerMethodField()
+    category = MpttSerializer()
+
+    class Meta:
+        model = models.Post
+        fields = (
+            'id',
+            'category',
+            'title',
+            'comment_count',
+            'clap_count',
+            'creator',
+            'natural_time',
+            'is_claped',
+        )
+
+    def get_is_claped(self, obj):
+        if 'request' in self.context:
+            request = self.context['request']
+            try:
+                models.Clap.objects.get(creator__id=request.user.id, post__id=obj.id)
+                return True
+            except models.Clap.DoesNotExist:
+                return False
+        return False
 
 class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
@@ -93,19 +154,35 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
                 return False
         return False
 
+class InputPostSerializer(serializers.ModelSerializer):
+    
+    category = MpttSerializer()
+
+    class Meta:
+        model = models.Post
+        fields = (
+            'category',
+            'title',
+            'body',
+        )
+
+
 class InputImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Image
         fields = (
-            'post',
             'image',
         )
 
+class NotificationSerializer(serializers.ModelSerializer):
 
+    creator = ListUserSerializer()
+    image = SmallImageSerializer()
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    
     class Meta:
-        model = models.User
-        fields = ('profile_image', 'username', 'bio')
+        model = models.Notification
+        fields = '__all__'
+
+
+

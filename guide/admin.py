@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Post, Category, Image
+from .models import *
 from mptt.admin import MPTTModelAdmin
 from mptt.admin import DraggableMPTTAdmin
 
@@ -11,7 +11,11 @@ class AdMPTTModelAdmin(MPTTModelAdmin):
 
 admin.site.register(User)
 admin.site.register(Post)
+admin.site.register(Comment)
+admin.site.register(Clap)
 admin.site.register(Image)
+admin.site.register(WikiImage)
+admin.site.register(Notification)
 admin.site.register(
     Category,
     DraggableMPTTAdmin,
