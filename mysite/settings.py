@@ -12,9 +12,14 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import environ
 
+ROOT_DIR = environ.Path(__file__) - 2  # (clap/config/settings - 2 = clap/)
+APPS_DIR = ROOT_DIR.path('clap')
+
+env = environ.Env()
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -51,11 +56,13 @@ INSTALLED_APPS = [
     'taggit_serializer', # Serializer for taggit
     'rest_framework',
     'rest_auth',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -141,9 +148,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = str(ROOT_DIR('staticfiles'))
+STATICFILES_DIRS = [
+    str(APPS_DIR.path('static')),
+    str(ROOT_DIR.path('frontend', 'build', 'static'))
+]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = str(APPS_DIR('media'))
 MEDIA_URL = '/media/'
 
 MPTT_ADMIN_LEVEL_INDENT = 20
+
+CORS_ORIGIN_ALLOW_ALL = True

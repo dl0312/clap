@@ -6,11 +6,6 @@ from . import views
 
 urlpatterns = [
     url(
-        regex = r'^$',
-        view = views.post_list,
-        name='post_list'
-    ),
-    url(
         regex = r'^api/post/$',
         view = views.PostList.as_view(),
         name = 'api_post_list'
@@ -69,3 +64,7 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += [
+    url(r'^', views.ReactAppView.as_view()),
+]
