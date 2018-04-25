@@ -9,22 +9,31 @@ from django.template import RequestContext
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from rest_auth.registration.views import SocialLoginView
 from . import models, serializers
 
 class PostList(APIView):
+
     def get(self, request, format=None):
+
         post_list = []
+
         posts = models.Post.objects.all()[:10]
+
         for post in posts:
+
             post_list.append(post)
+
         serializer = serializers.SimplePostSerializer(post_list, many=True, context={'request': request})
+
         return Response(serializer.data)
 
 class Post(APIView):
 
     def find_own_post(self,post_id,user):
         try:
-            post = models.Post.objects.get(id=post_id)
+            post = models.Post.objects.get(id=post_id, creator=user)
             return post
         except models.Post.DoesNotExist:
             return None
@@ -85,7 +94,7 @@ class Post(APIView):
         post = self.find_own_post(post_id,user)
         if post is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        image.delete()
+        post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ClapPost(APIView):
@@ -117,6 +126,52 @@ class ClapPost(APIView):
             new_clap.save()
             
             return Response(status=status.HTTP_201_CREATED)
+
+class Comment(APIView):
+
+    def post(self, request, post_id, format=None):
+        
+        serializer = serializers.CommentSerializer(data=request.data)
+
+        user = request.user
+
+        try:
+            found_post = models.Post.objects.get(id=post_id)
+        except models.Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if serializer.is_valid():
+            serializer.save(creator=user, post=found_post)
+            Notifications.create_notification(user,found_post.creator,'comment',found_post,serializer.data['message'])
+
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, comment_id, format=None):
+
+        user = request.user
+
+        try:
+            comment = models.Comment.objects.get(id=comment_id, creator=user)
+            comment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except models.Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+class ModerateComment(APIView):
+
+    def delete(self, request, post_id, comment_id, format=None):
+
+        user = request.user
+        
+        try:
+            comment_to_delete = models.Comment.objects.get(id=comment_id, post__id=post_id, post__creator=user)
+            comment_to_delete.delete()
+        except models.Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class Feed(APIView):
     def get(self, request, format=None):
@@ -159,6 +214,138 @@ class Notifications(APIView):
             post = post,
             comment = comment,
         )
+
+class UserProfile(APIView):
+
+    def get_user(self, username):
+
+        try:
+            found_user = models.User.objects.get(username=username)
+            return found_user
+        except models.User.DoesNotExist:
+            return None
+        
+    def get(self, request, username, format=None):
+
+        found_user = self.get_user(username)
+
+        if found_user is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = serializers.UserProfileSerializer(found_user)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, username, format=None):
+
+        user = request.user
+        
+        found_user = self.get_user(username)
+
+        if found_user is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        elif found_user.username !=user.username:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer = serializers.UserProfileSerializer(found_user)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangePassword(APIView):
+
+    def put(self, request, username, format=None):
+
+        user = request.user
+        
+        if user.username == username:
+
+            current_password = request.data.get('current_password', None)
+
+            if current_password is not None:
+
+                passwords_match = user.check_password(current_password)
+
+                if passwords_match:
+                    new_password = request.data.get('new_password', None)
+
+                    if new_password is not None:
+                        user.set_password(new_password)
+                        user.save()
+
+                        return Response(status=status.HTTP_200_OK)
+
+                    else:
+                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class FacebookLogin(SocialLoginView):
+    adapter_class = FacebookOAuth2Adapter
+
+class FollowUser(APIView):
+
+    def post(self, request, user_id, format=None):
+        user = request.user
+
+        try:
+            user_to_follow = models.User.objects.get(id=user_id)
+        except models.User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        user.following.add(user_to_follow)
+        user.save()
+
+        Notifications.create_notification(user,user_to_follow,'follow')
+
+        return Response(status=status.HTTP_200_OK)
+
+class UserFollower(APIView):
+
+    def get(self, request, username, format=None):
+
+        try:
+            found_user = models.User.objects.get(username=username)
+        except models.User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        user_followers = found_user.followers.all()
+
+        serializer = serializers.ListUserSerializer(user_followers, many=True, context={"request":request})
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+class UserFollowing(APIView):
+    def get(self, request, username, format=None):
+
+        try:
+            found_user = models.User.objects.get(username=username)
+        except models.User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        user_following = found_user.following.all()
+
+        serializer = serializers.ListUserSerializer(user_following)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+class UnFollowUser(APIView):
+
+    def post(self,request, user_id, format=None):
+        user = request.user
+        
+        try:
+            user_to_unfollow = models.User.objects.get(id=user_id)
+        except models.User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        user.following.remove(user_to_unfollow)
+        user.save()
+        return Response(status=status.HTTP_200_OK)
 
 
 

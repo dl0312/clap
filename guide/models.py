@@ -20,6 +20,28 @@ class TimeStampeModel(models.Model):
     class Meta:
         abstract = True
 
+class Category(MPTTModel):
+    name = models.CharField(max_length=50, unique=True)
+    parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children', db_index=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('category_detail', kwargs={'pk': self.pk, })
+
+    @property
+    def get_images(self):
+        return self.images.all()
+
+    @property
+    def get_posts(self):
+        return self.posts.all() 
+
+    class MPTTMeta:
+        level_attr = 'mptt_level'
+        order_insertion_by=['name']
+
 class User(AbstractUser):
 
     """ User Model """
@@ -56,27 +78,55 @@ class User(AbstractUser):
     def following_count(self):
         return self.following.all().count()
 
-class Category(MPTTModel):
-    name = models.CharField(max_length=50, unique=True)
-    parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children', db_index=True)
+@python_2_unicode_compatible
+class Game(TimeStampeModel):
+
+    """ Game Model """
+    title = models.CharField(max_length=100)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='games')
+    logo = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Logo',)
+    icon = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Icon',)
+    members = models.ManyToManyField(
+        User,
+        through='GameMember',
+        through_fields=('game', 'user'),
+    )
 
     def __str__(self):
-        return self.name
+        return self.title
 
-    def get_absolute_url(self):
-        return reverse('category_detail', kwargs={'pk': self.pk, })
+class GameMember(TimeStampeModel):
 
-    @property
-    def get_images(self):
-        return self.images.all()
+    """ GameMember Model """
 
-    @property
-    def get_posts(self):
-        return self.posts.all() 
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    inviter = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="gamemember_invites",
+    )
 
-    class MPTTMeta:
-        level_attr = 'mptt_level'
-        order_insertion_by=['name']
+class Achievement(TimeStampeModel):
+
+    """ Achievement Model """
+
+    name = models.CharField(max_length=128)
+    members = models.ManyToManyField(
+        User,
+        through='AchievementMember',
+        through_fields=('achievement', 'user'),
+    )
+
+class AchievementMember(models.Model):
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    inviter = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="achievementmember_invites",
+    )
+    invite_reason = models.CharField(max_length=64)
 
 @python_2_unicode_compatible
 class Post(TimeStampeModel):
@@ -179,7 +229,7 @@ class Notification(TimeStampeModel):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, related_name='creator')
     to = models.ForeignKey(User, on_delete=models.PROTECT, related_name='to')
     notification_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-    post = models.ForeignKey(Post, on_delete=models.PROTECT, null=True, blank=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
     comment = models.TextField(null=True,blank=True)
 
     class Meta:
