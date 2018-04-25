@@ -101,11 +101,6 @@ class GameMember(TimeStampeModel):
 
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    inviter = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="gamemember_invites",
-    )
 
 class Achievement(TimeStampeModel):
 
@@ -118,14 +113,12 @@ class Achievement(TimeStampeModel):
         through_fields=('achievement', 'user'),
     )
 
+    def __str__(self):
+        return self.name
+
 class AchievementMember(models.Model):
     achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    inviter = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="achievementmember_invites",
-    )
     invite_reason = models.CharField(max_length=64)
 
 @python_2_unicode_compatible
