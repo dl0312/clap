@@ -92,6 +92,15 @@ class MpttSerializer(serializers.ModelSerializer):
             'name',
         )
 
+class ChildrenSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Category
+        fields = (
+            'name',
+            'get_ancestors()'
+        )
+
 class SimplePostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     creator = FeedUserSerializer()

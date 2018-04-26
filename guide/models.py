@@ -42,6 +42,30 @@ class Category(MPTTModel):
         level_attr = 'mptt_level'
         order_insertion_by=['name']
 
+@python_2_unicode_compatible
+class Game(TimeStampeModel):
+
+    """ Game Model """
+    title = models.CharField(max_length=128)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='games')
+    logo = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Logo',)
+    icon = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Icon',)
+
+    def __str__(self):
+        return self.title
+
+@python_2_unicode_compatible
+class Achievement(TimeStampeModel):
+
+    """ Achievement Model """
+
+    name = models.CharField(max_length=64)
+    condition = models.CharField(max_length=128,null=True)
+
+    def __str__(self):
+        return self.name
+
+@python_2_unicode_compatible
 class User(AbstractUser):
 
     """ User Model """
@@ -56,6 +80,8 @@ class User(AbstractUser):
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
     bio = models.TextField(null=True)
     phone = models.CharField(max_length=140,null=True)
+    game = models.ManyToManyField(Game)
+    achievement = models.ManyToManyField(Achievement)
     gender = models.CharField(max_length=80, choices=GENDER_CHOICES, null=True)
     followers = models.ManyToManyField("self", blank=True)
     following = models.ManyToManyField("self", blank=True)
@@ -78,48 +104,7 @@ class User(AbstractUser):
     def following_count(self):
         return self.following.all().count()
 
-@python_2_unicode_compatible
-class Game(TimeStampeModel):
 
-    """ Game Model """
-    title = models.CharField(max_length=100)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='games')
-    logo = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Logo',)
-    icon = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Icon',)
-    members = models.ManyToManyField(
-        User,
-        through='GameMember',
-        through_fields=('game', 'user'),
-    )
-
-    def __str__(self):
-        return self.title
-
-class GameMember(TimeStampeModel):
-
-    """ GameMember Model """
-
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-class Achievement(TimeStampeModel):
-
-    """ Achievement Model """
-
-    name = models.CharField(max_length=128)
-    members = models.ManyToManyField(
-        User,
-        through='AchievementMember',
-        through_fields=('achievement', 'user'),
-    )
-
-    def __str__(self):
-        return self.name
-
-class AchievementMember(models.Model):
-    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    invite_reason = models.CharField(max_length=64)
 
 @python_2_unicode_compatible
 class Post(TimeStampeModel):

@@ -11,9 +11,7 @@ class AdMPTTModelAdmin(MPTTModelAdmin):
 
 admin.site.register(User)
 admin.site.register(Game)
-admin.site.register(GameMember)
 admin.site.register(Achievement)
-admin.site.register(AchievementMember)
 admin.site.register(Post)
 admin.site.register(Comment)
 admin.site.register(Clap)

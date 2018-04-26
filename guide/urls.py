@@ -6,30 +6,106 @@ from . import views
 
 urlpatterns = [
     url(
-        regex = r'^api/post/$',
+        regex = r'^users/explore/$',
+        view = views.ExploreUsers.as_view(),
+        name = 'api_explore_user'
+    ),
+    url(
+        regex = r'^users/(?P<user_id>[0-9]+)/follow/$',
+        view = views.FollowUser.as_view(),
+        name = 'api_follow_user'
+    ),
+    url(
+        regex = r'^users/(?P<user_id>[0-9]+)/unfollow/$',
+        view = views.UnFollowUser.as_view(),
+        name = 'api_unfollow_user'
+    ),
+    url(
+        regex = r'^users/(?P<username>\w+)/followers/$',
+        view = views.UserFollowers.as_view(),
+        name = 'api_user_followers'
+    ),
+    url(
+        regex = r'^users/(?P<username>\w+)/following/$',
+        view = views.UserFollowing.as_view(),
+        name = 'api_user_following'
+    ),
+    url(
+        regex = r'^users/search/$',
+        view = views.UserSearch.as_view(),
+        name = 'api_user_search'
+    ),
+    url(
+        regex = r'^users/push/$',
+        view = views.RegisterPush.as_view(),
+        name = 'api_push'
+    ),
+    url(
+        regex = r'^users/(?P<username>\w+)/$',
+        view = views.UserProfile.as_view(),
+        name = 'api_user_profile'
+    ),
+    url(
+        regex = r'^users/(?P<username>\w+)/password/$',
+        view = views.ChangePassword.as_view(),
+        name = 'api_change_password'
+    ),
+    url(
+        regex = r'^users/login/facebook/$',
+        view = views.FacebookLogin.as_view(),
+        name = 'api_facebook_login'
+    ),
+    url(
+        regex = r'^posts/$',
         view = views.PostList.as_view(),
         name = 'api_post_list'
     ),
     url(
-        regex = r'^api/post/(?P<post_id>[0-9]+)/$',
+        regex = r'^posts/(?P<post_id>[0-9]+)/$',
         view = views.Post.as_view(),
         name = 'api_post_detail'
     ),
     url(
-        regex = r'^api/post/(?P<post_id>[0-9]+)/clap/$',
+        regex = r'^posts/(?P<post_id>[0-9]+)/claps/$',
         view = views.ClapPost.as_view(),
         name = 'api_clap_post'
     ),
     url(
-        regex = r'^api/image/$',
+        regex = r'^posts/(?P<post_id>[0-9]+)/comments/$',
+        view = views.CommentOnPost.as_view(),
+        name = 'api_comment_on_post'
+    ),
+    url(
+        regex = r'^posts/(?P<post_id>[0-9]+)/comments/$',
+        view = views.CommentOnPost.as_view(),
+        name = 'api_comment_on_post'
+    ),
+    url(
+        regex = r'^posts/tagsearch/$',
+        view = views.PostTagSearch.as_view(),
+        name = 'api_post_tag_search'
+    ),
+    url(
+        regex = r'^posts/categorysearch/$',
+        view = views.PostCategorySearch.as_view(),
+        name = 'api_post_category_search'
+    ),
+    url(
+        regex = r'^images/$',
         view = views.Feed.as_view(),
         name = 'api_image_list'
     ),
     url(
         regex = r'^category/$',
-        view = views.show_categories,
-        name='show_categories'
+        view = views.CategoryList.as_view(),
+        name = 'api_category_list'
     ),
+    url(
+        regex = r'^category/(?P<category>\w+)/$',
+        view = views.ChildrenList.as_view(),
+        name = 'api_child_category'
+    ),
+
     url(
         regex = r'^category/(?P<category>\w+)/$',
         view = views.category_image,

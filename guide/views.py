@@ -147,6 +147,28 @@ class ClapPost(APIView):
             
             return Response(status=status.HTTP_201_CREATED)
 
+class CommentOnPost(APIView):
+
+    def post(self, request, post_id, format=None):
+
+        serializer = serializers.CommentSerializer(data=request.data)
+
+        user = request.user
+
+        try:
+            found_post = models.Post.objects.get(id=post_id)
+        except models.Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if serializer.is_valid():
+            serializer.save(creator=user, post=found_post)
+            Notifications.create_notification(user,found_post.creator,'comment',found_post,serializer.data['message'])
+
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class Comment(APIView):
 
     def post(self, request, post_id, format=None):
@@ -326,7 +348,7 @@ class FollowUser(APIView):
 
         return Response(status=status.HTTP_200_OK)
 
-class UserFollower(APIView):
+class UserFollowers(APIView):
 
     def get(self, request, username, format=None):
 
@@ -367,6 +389,113 @@ class UnFollowUser(APIView):
         user.save()
         return Response(status=status.HTTP_200_OK)
 
+class ExploreUsers(APIView):
+
+    def get(self, request, format=None):
+
+        last_five = models.User.objects.all().order_by('-date_joined')[:5]
+
+        serializer = serializers.ListUserSerializer(last_five, many=True, context={"request":request})
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+class UserSearch(APIView):
+
+    def get(self, request, format=None):
+
+        username = request.query_params.get('username', None)
+
+        if username is not None:
+
+            users = models.User.objects.filter(username__istartswith=username)
+
+            serializer = serializers.ListUserSerializer(users, many=True, context={"request": request})
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        else:
+
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class PostTagSearch(APIView):
+
+    def get(self, request, format=None):
+
+        hashtags = request.query_params.get('hashtags', None)
+
+        if hashtags is not None:
+
+            hashtags = hashtags.split(",")
+
+            posts = models.Post.objects.filter(tags__name__in=hashtags).distinct()
+
+            serializer = serializers.SimplePostSerializer(posts, many=True)
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        else:
+
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class PostCategorySearch(APIView):
+
+    def get(self, request, format=None):
+
+        category = request.query_params.get('category', None)
+
+        if category is not None:
+
+            posts = models.Post.objects.filter(category__name=category)
+
+            serializer = serializers.SimplePostSerializer(posts, many=True)
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        else:
+
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class RegisterPush(APIView):
+
+    def post(self, request):
+
+        user = request.user
+        
+        token = request.data.get('token', None)
+
+        if token is not None:
+
+            user.push_token = token
+            
+            user.save()
+
+            return Response(status=status.HTTP_200_OK)
+
+        else:
+            
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class CategoryList(APIView):
+
+    def get(self, request, format=None):
+
+        categories = models.Category.objects.all()
+
+        serializer = serializers.MpttSerializer(categories, many=True, context={'request': request})
+
+        return Response(serializer.data)
+
+class ChildrenList(APIView):
+
+    def get(self, request, category, format=None):
+
+        found_category = models.Category.objects.get(name=category)
+        
+        children_categories = found_category.get_descendants()
+
+        serializer = serializers.MpttSerializer(children_categories, many=True, context={'request':request})
+
+        return Response(serializer.data)
 
 
 def post_list(request):
