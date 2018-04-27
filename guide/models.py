@@ -80,8 +80,8 @@ class User(AbstractUser):
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
     bio = models.TextField(null=True)
     phone = models.CharField(max_length=140,null=True)
-    game = models.ManyToManyField(Game)
-    achievement = models.ManyToManyField(Achievement)
+    game = models.ManyToManyField(Game, null=True)
+    achievement = models.ManyToManyField(Achievement, null=True)
     gender = models.CharField(max_length=80, choices=GENDER_CHOICES, null=True)
     followers = models.ManyToManyField("self", blank=True)
     following = models.ManyToManyField("self", blank=True)
@@ -129,6 +129,10 @@ class Post(TimeStampeModel):
     @property
     def natural_time(self):
         return naturaltime(self.created_at)
+
+    @property
+    def ancestors(self):
+        return self.category.get_ancestors()
 
     def __str__(self):
         return self.title

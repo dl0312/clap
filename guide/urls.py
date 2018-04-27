@@ -101,9 +101,19 @@ urlpatterns = [
         name = 'api_category_list'
     ),
     url(
-        regex = r'^category/(?P<category>\w+)/$',
-        view = views.ChildrenList.as_view(),
-        name = 'api_child_category'
+        regex = r'^category/descendant/(?P<category>\w+)/$',
+        view = views.DescendantList.as_view(),
+        name = 'api_descendant_category'
+    ),
+    url(
+        regex = r'^category/ancestor/(?P<category>\w+)/$',
+        view = views.AncestorList.as_view(),
+        name = 'api_ancestor_category'
+    ),
+    url(
+        regex = r'^notifications/$',
+        view = views.Notifications.as_view(),
+        name = 'api_notification_feed'
     ),
 
     url(

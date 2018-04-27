@@ -17,12 +17,21 @@ class SmallImageSerializer(serializers.ModelSerializer):
 
 class CountPostSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Image
+        model = models.Post
         fields = (
             'id',
-            'file',
+            'title',
             'comment_count',
             'clap_count',
+        )
+
+class GameSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Game
+        fields = (
+            'title',
+            'icon'
         )
 
 class FeedUserSerializer(serializers.ModelSerializer):
@@ -58,12 +67,25 @@ class ListUserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     
+    posts = CountPostSerializer(many=True, read_only=True)
+    post_count = serializers.ReadOnlyField()
+    followers_count = serializers.ReadOnlyField()
+    following_count = serializers.ReadOnlyField()
+    game = GameSerializer(many=True)
+
     class Meta:
         model = models.User
         fields = (
             'profile_image',
             'username',
+            'name',
+            'certification',
+            'game',
             'bio',
+            'post_count',
+            'followers_count',
+            'following_count',
+            'posts'
         )
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -90,6 +112,7 @@ class MpttSerializer(serializers.ModelSerializer):
         model = models.Category
         fields = (
             'name',
+            'mptt_level'
         )
 
 class ChildrenSerializer(serializers.ModelSerializer):
@@ -187,7 +210,7 @@ class InputImageSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
 
     creator = ListUserSerializer()
-    image = SmallImageSerializer()
+    post = SimplePostSerializer()
 
     class Meta:
         model = models.Notification

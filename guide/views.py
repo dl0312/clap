@@ -289,7 +289,7 @@ class UserProfile(APIView):
         elif found_user.username !=user.username:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            serializer = serializers.UserProfileSerializer(found_user)
+            serializer = serializers.UserProfileSerializer(found_user, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -485,15 +485,27 @@ class CategoryList(APIView):
 
         return Response(serializer.data)
 
-class ChildrenList(APIView):
+class DescendantList(APIView):
 
     def get(self, request, category, format=None):
 
         found_category = models.Category.objects.get(name=category)
         
-        children_categories = found_category.get_descendants()
+        descendant_categories = found_category.get_descendants(True)
 
-        serializer = serializers.MpttSerializer(children_categories, many=True, context={'request':request})
+        serializer = serializers.MpttSerializer(descendant_categories, many=True, context={'request':request})
+
+        return Response(serializer.data)
+
+class AncestorList(APIView):
+
+    def get(self, request, category, format=None):
+
+        found_category = models.Category.objects.get(name=category)
+        
+        ancestor_categories = found_category.get_ancestors(False,True)
+
+        serializer = serializers.MpttSerializer(ancestor_categories, many=True, context={'request':request})
 
         return Response(serializer.data)
 
