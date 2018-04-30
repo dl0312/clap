@@ -215,7 +215,7 @@ class ModerateComment(APIView):
         
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class Feed(APIView):
+class FeedPost(APIView):
     def get(self, request, format=None):
         user = request.user
         following_users = user.following.all()
@@ -234,6 +234,39 @@ class Feed(APIView):
         serializer = serializers.PostSerializer(sorted_list, many=True, context={'request': request})
 
         return Response(serializer.data)
+
+class WikiImage(APIView):
+
+    def get (self, request, format=None):
+
+        wiki_image_list = []
+
+        images = models.WikiImage.objects.all()[:10]
+
+        for image in images:
+
+            wiki_image_list.append(image)
+
+        serializer = serializers.WikiImageSerializer(wiki_image_list, many=True, context={'request': request})
+
+        return Response(serializer.data)
+
+
+    def post (self, request, format=None):
+
+        user = request.user
+        
+        serializer = serializers.WikiImageSerializer(data=request.data) 
+
+        if serializer.is_valid():
+
+            serializer.save(creator=user)
+
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+        else:
+
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class Notifications(APIView):
 

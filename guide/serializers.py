@@ -88,6 +88,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'posts'
         )
 
+class SignUpSerializer(RegisterSerializer):
+
+    name = serializers.CharField(required=True, write_only=True)
+
+    def get_cleaned_data(self):
+        return {
+            'name': self.validated_data.get('name', ''),
+            'username': self.validated_data.get('username', ''),
+            'password1': self.validated_data.get('password1', ''),
+            'email': self.validated_data.get('email', '')
+        }
+    
+    def save(self, request):
+        adapter = get_adapter()
+        user = adapter.new_user(request)
+        self.cleaned_data = self.get_cleaned_data()
+        adapter.save_user(request, user, self)
+        setup_user_email(request, user, [])
+        user.save()
+        return user
+
 class CommentSerializer(serializers.ModelSerializer):
 
     creator = FeedUserSerializer(read_only=True)
@@ -196,6 +217,17 @@ class InputPostSerializer(serializers.ModelSerializer):
             'category',
             'title',
             'body',
+        )
+
+class WikiImageSerializer(serializers.ModelSerializer):
+    
+    category = MpttSerializer()
+
+    class Meta:
+        model = models.WikiImage
+        fields = (
+            'category',
+            'image',
         )
 
 

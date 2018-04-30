@@ -48,15 +48,17 @@ INSTALLED_APPS = [
     'allauth.account', # registration
     'allauth.socialaccount', # registration
     'allauth.socialaccount.providers.facebook', # facebook registration
+    'taggit', # Tags for the photos
+    'taggit_serializer', # Serializer for taggit
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'rest_auth.registration', # enable registration
+    'corsheaders',
     'upload',
     'guide',
     'wiki',
     'mptt',
-    'taggit', # Tags for the photos
-    'taggit_serializer', # Serializer for taggit
-    'rest_framework',
-    'rest_auth',
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -147,6 +149,27 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+}
+
+REST_USE_JWT = True
+ACCOUNT_LOGOUT_ON_GET = True
+SOCIALACCOUNT_QUERY_EMAIL = True
+JWT_AUTH = {
+    'JWT_VERIFY_EXPIRATION': False
+}
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'guide.serializers.SignUpSerializer'
+}
+
 STATIC_URL = '/static/'
 STATIC_ROOT = str(ROOT_DIR('staticfiles'))
 STATICFILES_DIRS = [
@@ -160,3 +183,5 @@ MEDIA_URL = '/media/'
 MPTT_ADMIN_LEVEL_INDENT = 20
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+SITE_ID = 1

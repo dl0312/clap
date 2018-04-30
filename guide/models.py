@@ -76,21 +76,21 @@ class User(AbstractUser):
         ('not-specified', 'Not specified')
     )
 
-    profile_image = models.ImageField(null=True)
+    profile_image = models.ImageField(null=True, blank=True)
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
-    bio = models.TextField(null=True)
-    phone = models.CharField(max_length=140,null=True)
-    game = models.ManyToManyField(Game, null=True)
-    achievement = models.ManyToManyField(Achievement, null=True)
-    gender = models.CharField(max_length=80, choices=GENDER_CHOICES, null=True)
-    followers = models.ManyToManyField("self", blank=True)
-    following = models.ManyToManyField("self", blank=True)
+    bio = models.TextField(null=True, blank=True)
+    phone = models.CharField(max_length=140,null=True, blank=True)
+    game = models.ManyToManyField(Game, blank=True)
+    achievement = models.ManyToManyField(Achievement, blank=True)
+    gender = models.CharField(max_length=80, choices=GENDER_CHOICES, null=True, blank=True)
+    myfollowers = models.ManyToManyField("self", blank=True, symmetrical=False, related_name='followers')
+    myfollowing = models.ManyToManyField("self", blank=True, symmetrical=False, related_name='following')
     exp = models.IntegerField(default=0)
     clap = models.IntegerField(default=0)
     certification = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return self.username
 
     @property
     def post_count(self):
@@ -186,6 +186,7 @@ class WikiImage(TimeStampeModel):
 
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='images')
     image = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Image',)
+    creator = models.ForeignKey(User,null=True, on_delete=models.SET_NULL, related_name='images')
 
     @property
     def natural_time(self):
@@ -193,7 +194,7 @@ class WikiImage(TimeStampeModel):
 
 
     def __str__(self):
-        return '{} - {}'.format(self.image)
+        return '{} - {}'.format(self.category, self.image)
 
     class Meta:
         ordering = ['-created_at']

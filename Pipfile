@@ -15,6 +15,7 @@ django-rest-auth = "*"
 django-taggit-serializer = "*"
 django-cors-headers = "*"
 django-environ = "*"
+djangorestframework-jwt = "*"
 
 [requires]
 python_version = "3.5"

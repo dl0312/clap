@@ -1,10 +1,14 @@
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework_jwt.views import obtain_jwt_token
 from . import views
 
 urlpatterns = [
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
+
     url(
         regex = r'^users/explore/$',
         view = views.ExploreUsers.as_view(),
@@ -61,6 +65,11 @@ urlpatterns = [
         name = 'api_post_list'
     ),
     url(
+        regex = r'^posts/feed/$',
+        view = views.FeedPost.as_view(),
+        name = 'api_feed_post'
+    ),
+    url(
         regex = r'^posts/(?P<post_id>[0-9]+)/$',
         view = views.Post.as_view(),
         name = 'api_post_detail'
@@ -91,8 +100,8 @@ urlpatterns = [
         name = 'api_post_category_search'
     ),
     url(
-        regex = r'^images/$',
-        view = views.Feed.as_view(),
+        regex = r'^wikiimages/$',
+        view = views.WikiImage.as_view(),
         name = 'api_image_list'
     ),
     url(
