@@ -30,7 +30,7 @@ SECRET_KEY = 'g&x=dm3(4#8)%rv0p_+&wyxb8ke(c+cz+wjm20@e-%m4g6909+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1', '.pythonanywhere.com']
 
 AUTH_USER_MODEL = 'guide.User'
 
