@@ -6,7 +6,9 @@ import formStyles from "shared/formStyles.scss";
 const SignupForm = (props, context) => (
   <div className={formStyles.formComponent}>
     <h3 className={formStyles.signupHeader}>
-      {context.t("Sign up to see photos and videos from your friends.")}
+      {context.t(
+        "Sign up, you can make your own Game Guides and clap to Game Guides you like"
+      )}
     </h3>
     <FacebookLogin
       appId="1660436057369700"
@@ -53,7 +55,7 @@ const SignupForm = (props, context) => (
       />
       <input
         type="submit"
-        value={context.t("Log in")}
+        value={context.t("Sign up")}
         className={formStyles.button}
       />
     </form>

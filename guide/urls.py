@@ -85,11 +85,6 @@ urlpatterns = [
         name = 'api_comment_on_post'
     ),
     url(
-        regex = r'^posts/(?P<post_id>[0-9]+)/comments/$',
-        view = views.CommentOnPost.as_view(),
-        name = 'api_comment_on_post'
-    ),
-    url(
         regex = r'^posts/tagsearch/$',
         view = views.PostTagSearch.as_view(),
         name = 'api_post_tag_search'
@@ -124,6 +119,7 @@ urlpatterns = [
         view = views.Notifications.as_view(),
         name = 'api_notification_feed'
     ),
+
 
     url(
         regex = r'^category/(?P<category>\w+)/$',

@@ -21,7 +21,7 @@ class Container extends Component {
         handleSubmit={this._handleSubmit}
         handleFacebookLogin={this._handleFacebookLogin}
         emailValue={email}
-        fullnameValue={name}
+        nameValue={name}
         usernameValue={username}
         passwordValue={password}
       />

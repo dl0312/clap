@@ -53,7 +53,7 @@ class Post(APIView):
 
     def find_own_post(self,post_id,user):
         try:
-            post = models.Post.objects.get(id=post_id, creator=user)
+            post = models.Post.objects.get(id=post_id)
             return post
         except models.Post.DoesNotExist:
             return None
@@ -92,7 +92,7 @@ class Post(APIView):
             
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
-        serializer = serializers.PostSerializer(post,context={'request':request})
+        serializer = serializers.PostSerializer(post, context={'request':request})
         
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
