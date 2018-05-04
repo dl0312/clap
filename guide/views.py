@@ -218,7 +218,7 @@ class ModerateComment(APIView):
 class FeedPost(APIView):
     def get(self, request, format=None):
         user = request.user
-        following_users = user.following.all()
+        following_users = user.followers.all()
         post_list = []
         print(request.user.following.all())
 
@@ -374,10 +374,29 @@ class FollowUser(APIView):
         except models.User.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        user.following.add(user_to_follow)
+        user.followers.add(user_to_follow)
         user.save()
+        user_to_follow.following.add(user)
+        user_to_follow.save()
 
         Notifications.create_notification(user,user_to_follow,'follow')
+
+        return Response(status=status.HTTP_200_OK)
+
+class UnFollowUser(APIView):
+
+    def post(self,request, user_id, format=None):
+        user = request.user
+        
+        try:
+            user_to_unfollow = models.User.objects.get(id=user_id)
+        except models.User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        user.followers.remove(user_to_unfollow)
+        user.save()
+        user_to_unfollow.following.remove(user)
+        user_to_unfollow.save()
 
         return Response(status=status.HTTP_200_OK)
 
@@ -408,19 +427,7 @@ class UserFollowing(APIView):
         serializer = serializers.ListUserSerializer(user_following)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-class UnFollowUser(APIView):
 
-    def post(self,request, user_id, format=None):
-        user = request.user
-        
-        try:
-            user_to_unfollow = models.User.objects.get(id=user_id)
-        except models.User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        
-        user.following.remove(user_to_unfollow)
-        user.save()
-        return Response(status=status.HTTP_200_OK)
 
 class ExploreUsers(APIView):
 

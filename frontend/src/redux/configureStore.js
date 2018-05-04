@@ -4,6 +4,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import { i18nState } from "redux-i18n";
 import createHistory from "history/createBrowserHistory";
 import thunk from "redux-thunk";
+import posts from "redux/modules/posts";
 import user from "redux/modules/user";
 
 const env = process.env.NODE_ENV;
@@ -19,6 +20,7 @@ if (env === "development") {
 
 const reducer = combineReducers({
   user,
+  posts,
   routing: routerReducer,
   i18nState
 });

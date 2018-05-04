@@ -3,13 +3,10 @@ import Container from "./container";
 
 const mapStateToProps = (state, ownProps) => {
   const {
-    user,
-    routing: { location }
+    user: { userList }
   } = state;
-
   return {
-    isLoggedIn: user.isLoggedIn,
-    pathname: location.pathname
+    userList
   };
 };
 

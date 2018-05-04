@@ -6,10 +6,14 @@ from mptt.admin import DraggableMPTTAdmin
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'lft', 'rght', 'tree_id', 'parent')
 
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'username')
+
+
 class AdMPTTModelAdmin(MPTTModelAdmin):
     list_display = ('name', 'lft', 'rght', 'tree_id', 'parent')
 
-admin.site.register(User)
+admin.site.register(User,UserAdmin)
 admin.site.register(Game)
 admin.site.register(Achievement)
 admin.site.register(Post)
