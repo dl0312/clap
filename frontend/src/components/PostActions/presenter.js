@@ -13,9 +13,6 @@ const PostActions = (props, context) => (
           <Ionicon icon="ios-heart-outline" fontSize="28px" color="black" />
         )}
       </span>
-      <span className={styles.icon}>
-        <Ionicon icon="ios-text-outline" fontSize="28px" color="black" />
-      </span>
     </div>
     <span className={styles.likes} onClick={props.openClaps}>
       {props.number}{" "}

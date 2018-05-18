@@ -1,9 +1,9 @@
 .post-list {
   @include boxBorder(yes);
   width: 100%;
-  max-width: $max-card-width;
+  max-width: $max-page-width;
   margin-bottom: 60px;
-  align-items: center;
+  font-size: $small-font-size;
   @include breakpoint("phone") {
     background-color: transparent;
     border: 0;
@@ -11,25 +11,37 @@
   }
   .table {
     width: 100%;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid $border-color;
     border: 1px solid black;
-    .post-elements {
-      width: 100%;
-      margin-right: 15px;
-      .table-row {
-        width: 200px;
-
+    .table-row {
+      border: 1px solid black;
+      .table-category {
+        width: 60px;
+        text-align: center;
+        padding: 10px 20px 10px 20px;
         border: 1px solid black;
-        .table-head {
-          align-items: center;
-
-          border: 1px solid black;
-        }
-        .table-data {
-          border: 1px solid black;
-        }
+      }
+      .table-title {
+        width: 500px;
+        padding: 10px 20px 10px 20px;
+        border: 1px solid black;
+      }
+      .table-creator {
+        width: 70px;
+        text-align: center;
+        padding: 10px 20px 10px 20px;
+        border: 1px solid black;
+      }
+      .table-count {
+        width: 70px;
+        text-align: center;
+        padding: 10px 20px 10px 20px;
+        border: 1px solid black;
+      }
+      .table-date {
+        width: 100px;
+        align-items: center;
+        padding: 10px 20px 10px 20px;
+        border: 1px solid black;
       }
     }
   }

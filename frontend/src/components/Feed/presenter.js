@@ -22,8 +22,8 @@ const LoadingFeed = props => (
 const RenderFeed = props => [
   <div className={styles.feed}>
     {props.feed.map(post => <FeedPost key={1} {...post} />)}
-  </div>,
-  <PostList key={2} posts={props.feed} />
+    <PostList key={2} posts={props.feed} />
+  </div>
 ];
 
 Feed.propTypes = {

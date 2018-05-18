@@ -4,7 +4,7 @@
 
 const SAVE_TOKEN = "SAVE_TOKEN";
 const LOGOUT = "LOGOUT";
-const SET_PHOTO_LIKES = "SET_PHOTO_LIKES";
+const SET_POST_CLAPS = "SET_POST_CLAPS";
 const FOLLOW_USER = "FOLLOW_USER";
 const UNFOLLOW_USER = "UNFOLLOW_USER";
 
@@ -23,10 +23,10 @@ function logout() {
   };
 }
 
-function setPhotoLikes(likes) {
+function setPostClaps(claps) {
   return {
-    type: SET_PHOTO_LIKES,
-    likes
+    type: SET_POST_CLAPS,
+    claps
   };
 }
 
@@ -114,12 +114,12 @@ function createAccount(username, password, email, name) {
   };
 }
 
-function getPhotoLikes(photoId) {
+function getPostClaps(postId) {
   return (dispatch, getState) => {
     const {
       user: { token }
     } = getState();
-    fetch(`/images/${photoId}/likes/`, {
+    fetch(`/posts/${postId}/claps/`, {
       headers: {
         Authorization: `JWT ${token}`
       }
@@ -131,7 +131,7 @@ function getPhotoLikes(photoId) {
         return response.json();
       })
       .then(json => {
-        dispatch(setPhotoLikes(json));
+        dispatch(setPostClaps(json));
       });
   };
 }
@@ -195,8 +195,8 @@ function reducer(state = initialState, action) {
       return applySetToken(state, action);
     case LOGOUT:
       return applyLogout(state, action);
-    case SET_PHOTO_LIKES:
-      return applyPhotoLikes(state, action);
+    case SET_POST_CLAPS:
+      return applyPostClaps(state, action);
     case FOLLOW_USER:
       return applyFollowUser(state, action);
     case UNFOLLOW_USER:
@@ -225,7 +225,7 @@ function applyLogout(state, action) {
   };
 }
 
-function applyPhotoLikes(state, action) {
+function applyPostClaps(state, action) {
   const { userList } = action;
   return {
     ...state,
@@ -267,7 +267,7 @@ const actionCreators = {
   usernameLogin,
   createAccount,
   logout,
-  getPhotoLikes,
+  getPostClaps,
   followUser,
   unfollowUser
 };

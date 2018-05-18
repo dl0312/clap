@@ -7,39 +7,39 @@ const PostList = (props, context) => {
   return (
     <div className={styles.postList}>
       <table className={styles.table}>
-        <div className={styles.postElements}>
+        <tr className={styles.tableRow}>
+          <th classNmae={styles.tableCategory}>CATEGORY</th>
+          <th className={styles.tableTitle}>TITLE</th>
+          <th className={styles.tableCreator}>CREATOR</th>
+          <th className={styles.tableCount}>COUNT</th>
+          <th className={styles.tableDate}>DATE</th>
+        </tr>
+        {props.posts.map(post => (
           <tr className={styles.tableRow}>
-            <th className={styles.tabelHead}>ID</th>
-            <th className={styles.tabelHead}>TITLE</th>
-            <th className={styles.tabelHead}>CREATOR</th>
-            <th className={styles.tabelHead}>COUNT</th>
-            <th className={styles.tabelHead}>DATE</th>
+            <td className={styles.tableCategory}>{post.category.name}</td>
+            <td className={styles.tableTitle}>{post.title}</td>
+            <td className={styles.tableCreator}>{post.username}</td>
+            <td className={styles.tableCount}>
+              <span className={styles.count}>{post.clap_count}</span>
+              <span className={styles.count}>{post.comment_count}</span>
+            </td>
+            <td className={styles.tableDate}>
+              <TimeStamp time={post.natural_time} />
+            </td>
           </tr>
-
-          {props.posts.map(post => (
-            <Post
-              id={post.id}
-              title={post.title}
-              username={post.creator.username}
-              clap_count={post.clap_count}
-              comment_count={post.comment_count}
-              natural_time={post.natural_time}
-              key={post.id}
-            />
-          ))}
-        </div>
+        ))}
       </table>
     </div>
   );
 };
 
 const Post = props => (
-  <div className={styles.post}>
+  <div className={styles.postElement}>
     <tr className={styles.tableRow}>
-      <td className={styles.tableData}>{props.id}</td>
-      <td className={styles.tableData}>{props.title}</td>
-      <td className={styles.tableData}>{props.username}</td>
-      <td className={styles.tableData}>
+      <td className={styles.tableCategory}>{props.category}</td>
+      <td className={styles.tableTitle}>{props.title}</td>
+      <td className={styles.tableCreator}>{props.username}</td>
+      <td className={styles.tableCount}>
         <span className={styles.count}>{props.clap_count}</span>
         <span className={styles.count}>{props.comment_count}</span>
       </td>

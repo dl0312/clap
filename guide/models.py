@@ -35,6 +35,14 @@ class Category(MPTTModel):
         return self.images.all()
 
     @property
+    def get_ancestors(self):
+        return self.ancestors(False, True)
+
+    @property
+    def get_rep_image(self):
+        return self.images[:1]
+
+    @property
     def get_posts(self):
         return self.posts.all() 
 
@@ -168,7 +176,7 @@ class Image(TimeStampeModel):
 
     """ Image Model """
 
-    image = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Image',)
+    image = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='image',)
 
     @property
     def natural_time(self):
@@ -185,7 +193,7 @@ class Image(TimeStampeModel):
 class WikiImage(TimeStampeModel):
 
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='images')
-    image = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='Image',)
+    image = models.ImageField(upload_to='photos/%Y/%m/%d',verbose_name='image',)
     creator = models.ForeignKey(User,null=True, on_delete=models.SET_NULL, related_name='images')
 
     @property

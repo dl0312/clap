@@ -194,7 +194,7 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
             'creator',
             'tags',
             'natural_time',
-            'is_claped',
+            'is_claped'
         )
 
     def get_is_claped(self, obj):

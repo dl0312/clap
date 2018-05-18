@@ -11,19 +11,23 @@ const FeedPost = (props, context) => {
   return (
     <div className={styles.feedPost}>
       <header className={styles.header}>
-        <span className={styles.category}>{props.category.name}</span>
-        <span className={styles.title}>{props.title}</span>
-        <TimeStamp time={props.natural_time} />
-        <div className={styles.headerColumn}>
-          <img
-            src={props.creator.profile_image || require("images/noPhoto.jpg")}
-            alt={props.creator.username}
-            className={styles.image}
-          />
-          <span className={styles.creator}>{props.creator.username}</span>
+        <div className={styles.imageOverlay}>
+          <span className={styles.category}>{props.category.name}</span>
+          <span className={styles.title}>{props.title}</span>
+          <TimeStamp time={props.natural_time} />
+          <div className={styles.headerColumn}>
+            <img
+              src={props.creator.profile_image || require("images/noPhoto.jpg")}
+              alt={props.creator.username}
+              className={styles.image}
+            />
+            <span className={styles.creator}>{props.creator.username}</span>
+          </div>
         </div>
       </header>
-      <span className={styles.body}>{props.body}</span>
+      <div className={styles.body}>
+        <span className={styles.bodyText}>{props.body}</span>
+      </div>
       <div className={styles.meta}>
         <PostActions
           number={props.clap_count}

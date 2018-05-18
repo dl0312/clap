@@ -1,7 +1,13 @@
 .actions {
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   .icons {
+    display: flex;
+    justify-content: center;
     margin-bottom: 5px;
+
     .icon {
       &:first-child {
         margin-right: 10px;
@@ -9,6 +15,9 @@
     }
   }
   .likes {
+    display: flex;
+
+    justify-content: center;
     font-weight: 600;
   }
 }
